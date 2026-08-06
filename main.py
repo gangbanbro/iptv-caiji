@@ -75,7 +75,7 @@ WEISHI_ORDER = [
     "重庆卫视", "四川卫视", "贵州卫视", "云南卫视", "陕西卫视",
     "甘肃卫视", "青海卫视", "宁夏卫视", "新疆卫视", "旅游卫视"
 ]
-ALL_ORDER = CCTV_ORDER + WEISHI_ORDER
+
 
 # 测速超时配置
 TEST_TIMEOUT = 3
@@ -440,42 +440,51 @@ def main():
     print(f"\n总共解析到 {len(all_raw)} 个频道条目（已过滤广告）")
     print("=" * 60)
 
-    channel_map = {k: [] for k in ALL_ORDER}
-    # 使用固定的香港频道列表
+    cctv_map = {k: [] for k in CCTV_ORDER}
+    weishi_map = {k: [] for k in WEISHI_ORDER}
     hk_map = {k: [] for k in HONGKONG_CHANNELS}
     kid_map = {k: [] for k in KID_ANIME_LIST}
 
     for nm, url in all_raw:
-        # V5广告拦截已在parse_channels_v4中执行，此处不再重复
         std_nm = normalize_name(nm)
         
         # 少儿频道
         if std_nm in kid_map:
             kid_map[std_nm].append(url)
-        # 央视卫视
-        if std_nm in channel_map:
-            channel_map[std_nm].append(url)
-        # 香港频道（只匹配固定列表）
+        # 央视频道
+        if std_nm in cctv_map:
+            cctv_map[std_nm].append(url)
+        # 地方卫视
+        if std_nm in weishi_map:
+            weishi_map[std_nm].append(url)
+        # 香港频道
         if is_hongkong_channel(nm):
-            # 使用标准化的名称
             if std_nm in hk_map:
                 hk_map[std_nm].append(url)
 
     print("开始多线程测速过滤死链...")
     print("=" * 60)
     
-    valid_map = {}
+    cctv_valid_map = {}
+    weishi_valid_map = {}
     hk_valid_map = {}
     kid_valid_map = {}
 
-    # 过滤央视卫视
-    for chn, uris in channel_map.items():
+    for chn, uris in cctv_map.items():
         if not uris:
-            valid_map[chn] = []
+            cctv_valid_map[chn] = []
             continue
         unique_uris = list(dict.fromkeys(uris))
         ok_uris = batch_filter_urls(unique_uris, f"CCTV-{chn}")
-        valid_map[chn] = ok_uris
+        cctv_valid_map[chn] = ok_uris
+
+    for chn, uris in weishi_map.items():
+        if not uris:
+            weishi_valid_map[chn] = []
+            continue
+        unique_uris = list(dict.fromkeys(uris))
+        ok_uris = batch_filter_urls(unique_uris, f"卫视-{chn}")
+        weishi_valid_map[chn] = ok_uris
 
     # 过滤香港频道（按固定顺序）
     for chn, uris in hk_map.items():
@@ -501,15 +510,25 @@ def main():
     m3u_lines = ["#EXTM3U"]
 
     # 1. 央视卫视分组
-    out_lines.append("央视卫视,#genre#")
-    raw_all_lines.append("央视卫视,#genre#")
-    for chn in ALL_ORDER:
+    out_lines.append("央视频道,#genre#")
+    raw_all_lines.append("央视频道,#genre#")
+    for chn in CCTV_ORDER:
         show_name = CCTV_NAME_FULL.get(chn, chn)
-        for idx, vu in enumerate(valid_map[chn], 1):
+        for idx, vu in enumerate(cctv_valid_map[chn], 1):
             out_lines.append(f"{show_name},{vu}$LR•IPV4•29『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 group-title="央视卫视",{show_name}')
+            m3u_lines.append(f'#EXTINF:-1 group-title="央视频道",{show_name}')
             m3u_lines.append(vu)
-        for idx, ru in enumerate(channel_map[chn], 1):
+        for idx, ru in enumerate(cctv_map[chn], 1):
+            raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
+
+    out_lines.append("地方卫视,#genre#")
+    raw_all_lines.append("地方卫视,#genre#")
+    for chn in WEISHI_ORDER:
+        for idx, vu in enumerate(weishi_valid_map[chn], 1):
+            out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
+            m3u_lines.append(f'#EXTINF:-1 group-title="地方卫视",{chn}')
+            m3u_lines.append(vu)
+        for idx, ru in enumerate(weishi_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
 
     # 2. 香港频道分组（按固定顺序输出）
@@ -547,9 +566,10 @@ def main():
     save_file(m3u_lines, "live.m3u")
 
     print("=" * 60)
-    print("结构完全对齐：央视卫视→香港频道→少儿动画→灵鹿整合")
+    print("结构完全对齐：央视频道→地方卫视→香港频道→少儿动画→灵鹿整合")
     print(f"生成文件: live.txt (过滤后), result.txt (原始), live.m3u (M3U格式)")
-    print(f"央视卫视: {sum(len(v) for v in valid_map.values())} 个有效链接")
+    print(f"央视频道: {sum(len(v) for v in cctv_valid_map.values())} 个有效链接")
+    print(f"地方卫视: {sum(len(v) for v in weishi_valid_map.values())} 个有效链接")
     print(f"香港频道: {sum(len(v) for v in hk_valid_map.values())} 个有效链接")
     print(f"少儿动画: {sum(len(v) for v in kid_valid_map.values())} 个有效链接")
     print(f"广告拦截已启用，共拦截广告内容")
