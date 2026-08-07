@@ -527,7 +527,7 @@ def main():
         show_name = CCTV_NAME_FULL.get(chn, chn)
         for idx, vu in enumerate(cctv_valid_map[chn], 1):
             out_lines.append(f"{show_name},{vu}$LR•IPV4•29『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 group-title="央视频道",{show_name}')
+            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{show_name}" group-title="央视频道",{show_name}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(cctv_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
@@ -537,7 +537,7 @@ def main():
     for chn in WEISHI_ORDER:
         for idx, vu in enumerate(weishi_valid_map[chn], 1):
             out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 group-title="地方卫视",{chn}')
+            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="地方卫视",{chn}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(weishi_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
@@ -549,7 +549,7 @@ def main():
         if chn in hk_valid_map:
             for idx, vu in enumerate(hk_valid_map[chn], 1):
                 out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
-                m3u_lines.append(f'#EXTINF:-1 group-title="香港频道",{chn}')
+                m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="香港频道",{chn}')
                 m3u_lines.append(vu)
         if chn in hk_map:
             for idx, ru in enumerate(hk_map[chn], 1):
@@ -561,7 +561,7 @@ def main():
     for chn in KID_ANIME_LIST:
         for idx, vu in enumerate(kid_valid_map[chn], 1):
             out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 group-title="少儿动画",{chn}')
+            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="少儿动画",{chn}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(kid_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
