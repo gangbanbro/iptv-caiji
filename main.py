@@ -174,12 +174,13 @@ def is_ad_url(uri):
 # V6 分辨率检测引擎（ffprobe）
 # ============================================================
 
-def detect_resolution(url, timeout=8):
+def detect_resolution(url, timeout=15):
     """
     使用 ffprobe 检测视频流分辨率
     返回: 分辨率标签如 "4K", "1080p", "720p", "SD", "未知"
     """
     if not shutil.which("ffprobe"):
+        print(f"[FFPROBE] 未找到ffprobe")
         return "未知"
     
     try:
@@ -200,6 +201,7 @@ def detect_resolution(url, timeout=8):
         )
         
         if result.returncode != 0 or not result.stdout.strip():
+            print(f"[FFPROBE] 检测失败: {result.stderr[:100] if result.stderr else '无输出'}")
             return "未知"
         
         # 解析 "width,height" 格式
@@ -219,8 +221,8 @@ def detect_resolution(url, timeout=8):
             else:
                 return "SD"
         
-    except (subprocess.TimeoutExpired, ValueError, Exception):
-        pass
+    except (subprocess.TimeoutExpired, ValueError, Exception) as e:
+        print(f"[FFPROBE] 异常: {e}")
     
     return "未知"
 
