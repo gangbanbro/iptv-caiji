@@ -1,8 +1,6 @@
 import requests
 import re
 import time
-import subprocess
-import shutil
 from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor
 
@@ -47,7 +45,7 @@ CCTV_NAME_FULL = {
 # 固定的香港频道列表
 HONGKONG_CHANNELS = [
     "翡翠台",
-    "明珠台", 
+    "明珠台",
     "无线新闻台",
     "TVB Plus",
     "凤凰卫视",
@@ -56,11 +54,11 @@ HONGKONG_CHANNELS = [
 
 # 少儿卡通列表（不含CCTV14，CCTV14留在央视区）
 KID_ANIME_LIST = [
-    "金鹰卡通","卡酷少儿","优漫卡通","哈哈炫动","嘉佳卡通",
-    "广东少儿","浙江少儿","山东少儿","重庆少儿","四川妇女儿童",
-    "福建少儿","江西少儿","云南少儿","河北少儿科教","内蒙古少儿",
-    "辽宁教育·青少","黑龙江少儿","海南少儿","甘肃少儿","宁夏少儿","新疆少儿",
-    "深圳少儿","南京少儿","杭州青少体育","济南少儿","成都少儿"
+    "金鹰卡通", "卡酷少儿", "优漫卡通", "哈哈炫动", "嘉佳卡通",
+    "广东少儿", "浙江少儿", "山东少儿", "重庆少儿", "四川妇女儿童",
+    "福建少儿", "江西少儿", "云南少儿", "河北少儿科教", "内蒙古少儿",
+    "辽宁教育·青少", "黑龙江少儿", "海南少儿", "甘肃少儿", "宁夏少儿", "新疆少儿",
+    "深圳少儿", "南京少儿", "杭州青少体育", "济南少儿", "成都少儿"
 ]
 
 # 排序模板：央视+卫视固定顺序
@@ -77,7 +75,6 @@ WEISHI_ORDER = [
     "重庆卫视", "四川卫视", "贵州卫视", "云南卫视", "陕西卫视",
     "甘肃卫视", "青海卫视", "宁夏卫视", "新疆卫视", "旅游卫视"
 ]
-
 
 # 测速超时配置
 TEST_TIMEOUT = 3
@@ -128,15 +125,16 @@ AD_DOMAIN_BLACKLIST = [
     "click."
 ]
 
+
 def is_ad_channel(name, url):
     """
     广告检测
     返回 True = 广告
     """
     text = (
-        str(name) +
-        " " +
-        str(url)
+            str(name) +
+            " " +
+            str(url)
     ).lower()
 
     # URL关键词检测
@@ -159,6 +157,7 @@ def is_ad_channel(name, url):
 
     return False
 
+
 def is_ad_url(uri):
     """URL广告检测（用于测速阶段二次拦截）"""
     uri = uri.lower()
@@ -170,63 +169,6 @@ def is_ad_url(uri):
             return True
     return False
 
-# ============================================================
-# V6 分辨率检测引擎（ffprobe）
-# ============================================================
-
-def detect_resolution(url, timeout=15):
-    """
-    使用 ffprobe 检测视频流分辨率
-    返回: 分辨率标签如 "4K", "1080p", "720p", "SD", "未知"
-    """
-    if not shutil.which("ffprobe"):
-        print(f"[FFPROBE] 未找到ffprobe")
-        return "未知"
-    
-    try:
-        cmd = [
-            "ffprobe",
-            "-v", "error",
-            "-analyzeduration", "5000000",
-            "-probesize", "5000000",
-            "-select_streams", "v:0",
-            "-show_entries", "stream=width,height,codec_name",
-            "-of", "csv=p=0",
-            url
-        ]
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout
-        )
-        
-        if result.returncode != 0 or not result.stdout.strip():
-            print(f"[FFPROBE] 检测失败 {url[:50]}: {result.stderr[:80] if result.stderr else '无输出'}")
-            return "未知"
-        
-        output = result.stdout.strip()
-        # 解析 "width,height,codec" 格式
-        parts = output.split(",")
-        if len(parts) >= 2:
-            width = int(parts[0].strip())
-            height = int(parts[1].strip())
-            
-            if width >= 3840 or height >= 2160:
-                return "4K"
-            elif width >= 1920 or height >= 1080:
-                return "1080p"
-            elif width >= 1280 or height >= 720:
-                return "720p"
-            elif width >= 720 or height >= 480:
-                return "SD"
-            else:
-                return "SD"
-        
-    except (subprocess.TimeoutExpired, ValueError, Exception) as e:
-        print(f"[FFPROBE] 异常 {url[:50]}: {e}")
-    
-    return "未知"
 
 # ============================================================
 # V4 IPTV 万能解析引擎
@@ -245,6 +187,7 @@ def detect_source_type(text):
     if "http" in text:
         return "mixed"
     return "unknown"
+
 
 def parse_channels_v4(text):
     """
@@ -285,7 +228,7 @@ def parse_channels_v4(text):
             if is_ad_url(line):
                 name = None
                 continue
-            
+
             if name:
                 # V5广告拦截 - 检测频道名
                 if not is_ad_channel(name, line):
@@ -347,8 +290,9 @@ def parse_channels_v4(text):
         if key not in seen:
             seen.add(key)
             unique_channels.append((n, u))
-    
+
     return unique_channels
+
 
 # ============================================================
 # 增强版抓取函数
@@ -367,19 +311,20 @@ def fetch_text(url):
 
         r = requests.get(url, headers=headers_v2, timeout=20, allow_redirects=True)
         r.raise_for_status()
-        
+
         # 自动检测编码
         r.encoding = r.apparent_encoding or 'utf-8'
-        
+
         # 检测源类型
         source_type = detect_source_type(r.text)
         print(f"[{source_type.upper()}] 抓取成功: {url}")
-        
+
         return r.text
 
     except Exception as e:
         print(f"[SOURCE FAIL] {url} | {e}")
         return ""
+
 
 # ============================================================
 # 核心逻辑 (修改香港频道部分)
@@ -424,6 +369,7 @@ def normalize_name(name):
             return ws
     return name
 
+
 def is_hongkong_channel(name):
     if not name:
         return False
@@ -433,50 +379,51 @@ def is_hongkong_channel(name):
             return True
     return False
 
+
 def check_url_alive(uri):
     # V5广告拦截 - 测速阶段二次拦截
     if is_ad_url(uri):
-        return False, uri, "未知"
-    
+        return False, uri
+
     try:
         r = requests.head(uri, timeout=TEST_TIMEOUT, headers=headers, allow_redirects=True)
         if r.status_code in (200, 301, 302, 304):
-            resolution = detect_resolution(uri)
-            return True, uri, resolution
+            return True, uri
     except:
         pass
     try:
         r = requests.get(uri, timeout=TEST_TIMEOUT, headers=headers, stream=True)
         for _ in r.iter_content(chunk_size=1024):
-            resolution = detect_resolution(uri)
-            return True, uri, resolution
+            return True, uri
     except:
-        return False, uri, "未知"
-    return False, uri, "未知"
+        return False, uri
+    return False, uri
+
 
 def batch_filter_urls(uri_list, tag=""):
     valid = []
-    resolutions = {}
-    
+
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as exe:
         res = exe.map(check_url_alive, uri_list)
-    
-    for ok, u, res_info in res:
+
+    for ok, u in res:
         if ok:
-            print(f"[OK] {tag} {u} [{res_info}]")
+            print(f"[OK] {tag} {u}")
             valid.append(u)
-            resolutions[u] = res_info
         else:
             print(f"[FAIL] {tag} {u}")
-    
-    return valid, resolutions
+
+    return valid
+
 
 def save_file(content_list, fname):
     with open(fname, "w", encoding="utf-8") as f:
         f.write("\n".join(content_list))
 
+
 def get_beijing_time():
     return datetime.now(BEIJING_TZ).strftime("%Y%m%d %H:%M")
+
 
 # ============================================================
 # 主程序
@@ -495,7 +442,7 @@ def main():
         txt = fetch_text(src)
         if not txt:
             continue
-        
+
         # 使用V4万能解析器（内部已集成V5广告拦截）
         chs = parse_channels_v4(txt)
         print(f"  解析到 {len(chs)} 个频道")
@@ -511,7 +458,7 @@ def main():
 
     for nm, url in all_raw:
         std_nm = normalize_name(nm)
-        
+
         # 少儿频道
         if std_nm in kid_map:
             kid_map[std_nm].append(url)
@@ -528,33 +475,27 @@ def main():
 
     print("开始多线程测速过滤死链...")
     print("=" * 60)
-    
+
     cctv_valid_map = {}
     weishi_valid_map = {}
     hk_valid_map = {}
     kid_valid_map = {}
-    cctv_res_map = {}
-    weishi_res_map = {}
-    hk_res_map = {}
-    kid_res_map = {}
 
     for chn, uris in cctv_map.items():
         if not uris:
             cctv_valid_map[chn] = []
             continue
         unique_uris = list(dict.fromkeys(uris))
-        ok_uris, res_info = batch_filter_urls(unique_uris, f"CCTV-{chn}")
+        ok_uris = batch_filter_urls(unique_uris, f"CCTV-{chn}")
         cctv_valid_map[chn] = ok_uris
-        cctv_res_map.update(res_info)
 
     for chn, uris in weishi_map.items():
         if not uris:
             weishi_valid_map[chn] = []
             continue
         unique_uris = list(dict.fromkeys(uris))
-        ok_uris, res_info = batch_filter_urls(unique_uris, f"卫视-{chn}")
+        ok_uris = batch_filter_urls(unique_uris, f"卫视-{chn}")
         weishi_valid_map[chn] = ok_uris
-        weishi_res_map.update(res_info)
 
     # 过滤香港频道（按固定顺序）
     for chn, uris in hk_map.items():
@@ -562,9 +503,8 @@ def main():
             hk_valid_map[chn] = []
             continue
         unique_uris = list(dict.fromkeys(uris))
-        ok_uris, res_info = batch_filter_urls(unique_uris, f"HK-{chn}")
+        ok_uris = batch_filter_urls(unique_uris, f"HK-{chn}")
         hk_valid_map[chn] = ok_uris
-        hk_res_map.update(res_info)
 
     # 过滤少儿频道
     for chn, uris in kid_map.items():
@@ -572,25 +512,22 @@ def main():
             kid_valid_map[chn] = []
             continue
         unique_uris = list(dict.fromkeys(uris))
-        ok_uris, res_info = batch_filter_urls(unique_uris, f"KID-{chn}")
+        ok_uris = batch_filter_urls(unique_uris, f"KID-{chn}")
         kid_valid_map[chn] = ok_uris
-        kid_res_map.update(res_info)
 
     # 严格按指定顺序组装
     out_lines = []
     raw_all_lines = []
     m3u_lines = ["#EXTM3U"]
-    #
-    #
+
     # 1. 央视卫视分组
     out_lines.append("央视频道,#genre#")
     raw_all_lines.append("央视频道,#genre#")
     for chn in CCTV_ORDER:
         show_name = CCTV_NAME_FULL.get(chn, chn)
         for idx, vu in enumerate(cctv_valid_map[chn], 1):
-            res = cctv_res_map.get(vu, "未知")
-            out_lines.append(f"{show_name},{vu}$LR•IPV4•29•{res}『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{show_name}" group-title="央视频道",{show_name} [{res}]')
+            out_lines.append(f"{show_name},{vu}$LR•IPV4•29『线路{idx}』")
+            m3u_lines.append(f'#EXTINF:-1 group-title="央视频道",{show_name}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(cctv_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
@@ -599,9 +536,8 @@ def main():
     raw_all_lines.append("地方卫视,#genre#")
     for chn in WEISHI_ORDER:
         for idx, vu in enumerate(weishi_valid_map[chn], 1):
-            res = weishi_res_map.get(vu, "未知")
-            out_lines.append(f"{chn},{vu}$LR•IPV4•29•{res}『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="地方卫视",{chn} [{res}]')
+            out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
+            m3u_lines.append(f'#EXTINF:-1 group-title="地方卫视",{chn}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(weishi_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
@@ -612,9 +548,8 @@ def main():
     for chn in HONGKONG_CHANNELS:
         if chn in hk_valid_map:
             for idx, vu in enumerate(hk_valid_map[chn], 1):
-                res = hk_res_map.get(vu, "未知")
-                out_lines.append(f"{chn},{vu}$LR•IPV4•29•{res}『线路{idx}』")
-                m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="香港频道",{chn} [{res}]')
+                out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
+                m3u_lines.append(f'#EXTINF:-1 group-title="香港频道",{chn}')
                 m3u_lines.append(vu)
         if chn in hk_map:
             for idx, ru in enumerate(hk_map[chn], 1):
@@ -625,9 +560,8 @@ def main():
     raw_all_lines.append("少儿动画,#genre#")
     for chn in KID_ANIME_LIST:
         for idx, vu in enumerate(kid_valid_map[chn], 1):
-            res = kid_res_map.get(vu, "未知")
-            out_lines.append(f"{chn},{vu}$LR•IPV4•29•{res}『线路{idx}』")
-            m3u_lines.append(f'#EXTINF:-1 tvg-id="{chn}" tvg-name="{chn}" group-title="少儿动画",{chn} [{res}]')
+            out_lines.append(f"{chn},{vu}$LR•IPV4•29『线路{idx}』")
+            m3u_lines.append(f'#EXTINF:-1 group-title="少儿动画",{chn}')
             m3u_lines.append(vu)
         for idx, ru in enumerate(kid_map[chn], 1):
             raw_all_lines.append(f"{chn},{ru}$LR•IPV4•29『线路{idx}』")
@@ -650,6 +584,7 @@ def main():
     print(f"香港频道: {sum(len(v) for v in hk_valid_map.values())} 个有效链接")
     print(f"少儿动画: {sum(len(v) for v in kid_valid_map.values())} 个有效链接")
     print(f"广告拦截已启用，共拦截广告内容")
+
 
 if __name__ == "__main__":
     main()
