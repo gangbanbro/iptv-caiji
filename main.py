@@ -187,10 +187,11 @@ def detect_resolution(url, timeout=15):
         cmd = [
             "ffprobe",
             "-v", "error",
+            "-analyzeduration", "5000000",
+            "-probesize", "5000000",
             "-select_streams", "v:0",
-            "-show_entries", "stream=width,height",
+            "-show_entries", "stream=width,height,codec_name",
             "-of", "csv=p=0",
-            "-timeout", str(timeout * 1000000),
             url
         ]
         result = subprocess.run(
@@ -201,14 +202,15 @@ def detect_resolution(url, timeout=15):
         )
         
         if result.returncode != 0 or not result.stdout.strip():
-            print(f"[FFPROBE] 检测失败: {result.stderr[:100] if result.stderr else '无输出'}")
+            print(f"[FFPROBE] 检测失败 {url[:50]}: {result.stderr[:80] if result.stderr else '无输出'}")
             return "未知"
         
-        # 解析 "width,height" 格式
-        parts = result.stdout.strip().split(",")
-        if len(parts) == 2:
-            width = int(parts[0])
-            height = int(parts[1])
+        output = result.stdout.strip()
+        # 解析 "width,height,codec" 格式
+        parts = output.split(",")
+        if len(parts) >= 2:
+            width = int(parts[0].strip())
+            height = int(parts[1].strip())
             
             if width >= 3840 or height >= 2160:
                 return "4K"
@@ -222,7 +224,7 @@ def detect_resolution(url, timeout=15):
                 return "SD"
         
     except (subprocess.TimeoutExpired, ValueError, Exception) as e:
-        print(f"[FFPROBE] 异常: {e}")
+        print(f"[FFPROBE] 异常 {url[:50]}: {e}")
     
     return "未知"
 
