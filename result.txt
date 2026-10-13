@@ -188,6 +188,8 @@ CCTV3,http://74.91.26.218:82/live/cctv3hd.m3u8$LR•IPV4•29『线路58』
 CCTV3,http://[2409:8087:5e00:24::11]:6060/200000001898/460000089800010212/$LR•IPV4•29『线路59』
 CCTV3,http://39.135.135.41/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221226021/index.m3u8$LR•IPV4•29『线路60』
 CCTV3,https://cctvwbcdtxyhw.liveplay.myqcloud.com/cctvwbcd/cdrmjzcctv3_1/index.m3u8$LR•IPV4•29『线路61』
+CCTV3,https://tx-origin.pull.yximgs.com/gifshow/kwai_actL_ol_act_14998908577_strL_GameAvcHdL0.flv?txSecret=cb84a71df508d6a4b3d5789c2e7c536a&txTime=6aced78e&stat=EN%2BERngdhn44X%2BQ0bAiGVsuIr%2FVWTU9E1XxU0tacoIVXGwUn1QJNujKb3Mm2avZd&tsc=origin&highTraffic=2&oidc=watchmen&sidc=2756&no_script=1&srcStrm=S4zBNO_Yw88&ss=s20&tfc_buyer=0$LR•IPV4•29『线路62』
+CCTV3,https://tx-origin.pull.yximgs.com/gifshow/kwai_actL_ol_act_14998908577_strL_GameAvcHdL0.flv?txSecret=cb84a71df508d6a4b3d5789c2e7c536a&txTime=6aced78e&stat=EN%2BERngdhn44X%2BQ0bAiGVsuIr%2FVWTU9E1XxU0tacoIVXGwUn1QJNujKb3Mm2avZd&tsc=origin&highTraffic=2&oidc=watchmen&sidc=2756&no_script=1&srcStrm=S4zBNO_Yw88&ss=s20&tfc_buyer=0$LR•IPV4•29『线路63』
 CCTV4,http://cfss.cc/cdn/dy/CCTV4...flv$LR•IPV4•29『线路1』$LR•IPV4•29『线路1』
 CCTV4,http://smartzhu.cn:1234/631780421$LR•IPV4•29『线路2』$LR•IPV4•29『线路2』
 CCTV4,http://smartzhu.cn:1234/608807419$LR•IPV4•29『线路3』$LR•IPV4•29『线路3』
@@ -1075,6 +1077,8 @@ CCTV17,http://74.91.26.218:82/live/cctv17hd.m3u8$LR•IPV4•29『线路59』
 CCTV17,http://[2409:8087:5e00:24::10]:6060/200000001898/460000089800010210/$LR•IPV4•29『线路60』
 CCTV17,http://39.135.135.88/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225765/index.m3u8$LR•IPV4•29『线路61』
 CCTV17,https://cctvwbcdtxyhw.liveplay.myqcloud.com/cctvwbcd/cdrmjzcctv17_1/index.m3u8$LR•IPV4•29『线路62』
+CCTV17,https://tx-origin.pull.yximgs.com/gifshow/kwai_actL_ol_act_14998912497_strL_GameAvcFhdL0.flv?txSecret=27245971d44d3a62f4c1e929f65d5db3&txTime=6aced7e4&stat=dJpyY%2Braq49U5Fh01MV9YvA8EUWB1WSUqnsUdktmUyXAS95fxllhwrjiNvcm6YmF&tsc=origin&oidc=watchmen&sidc=2062&no_script=1&srcStrm=F9By6laIXpU&ss=s20&tfc_buyer=0$LR•IPV4•29『线路63』
+CCTV17,https://tx-origin.pull.yximgs.com/gifshow/kwai_actL_ol_act_14998912497_strL_GameAvcFhdL3.flv?txSecret=0bff706e3de45c5a609c7a271043f9a1&txTime=6aced7e4&stat=dJpyY%2Braq49U5Fh01MV9YvA8EUWB1WSUqnsUdktmUyXAS95fxllhwrjiNvcm6YmF&tsc=origin&oidc=watchmen&sidc=2062&no_script=1&srcStrm=F9By6laIXpU&ss=s20&tfc_buyer=0$LR•IPV4•29『线路64』
 地方卫视,#genre#
 北京卫视,http://smartzhu.cn:1234/630287636$LR•IPV4•29『线路1』$LR•IPV4•29『线路1』
 北京卫视,http://my1nas.dpdns.org:1234/630287636$LR•IPV4•29『线路2』$LR•IPV4•29『线路2』
@@ -1172,6 +1176,7 @@ CCTV17,https://cctvwbcdtxyhw.liveplay.myqcloud.com/cctvwbcd/cdrmjzcctv17_1/index
 天津卫视,http://183.207.249.12/PLTV/4/224/3221225808/index.m3u8$LR•IPV4•29『线路36』
 天津卫视,http://223.110.245.151/ott.js.chinamobile.com/PLTV/3/224/3221225808/index.m3u8$LR•IPV4•29『线路37』
 天津卫视,http://183.11.239.36:808/hls/42/index.m3u8$LR•IPV4•29『线路38』
+天津卫视,http://183.11.239.36:808/hls/42/index.m3u8$LR•IPV4•29『线路39』
 河北卫视,http://smartzhu.cn:1234/962042070$LR•IPV4•29『线路1』$LR•IPV4•29『线路1』
 河北卫视,http://my1nas.dpdns.org:1234/962042070$LR•IPV4•29『线路2』$LR•IPV4•29『线路2』
 河北卫视,http://www.20260809.xyz:1234/962042070$LR•IPV4•29『线路3』$LR•IPV4•29『线路3』
@@ -1427,7 +1432,8 @@ CCTV17,https://cctvwbcdtxyhw.liveplay.myqcloud.com/cctvwbcd/cdrmjzcctv17_1/index
 黑龙江卫视,http://39.135.133.173/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221226327/index.m3u8$LR•IPV4•29『线路42』
 黑龙江卫视,https://idclive.hljtv.com:4430/live/hljws_own.m3u8$LR•IPV4•29『线路43』
 黑龙江卫视,http://182.150.112.112:2025/hls/66/index.m3u8$LR•IPV4•29『线路44』
-黑龙江卫视,http://182.150.112.112:2025/hls/66/index.m3u8$LR•IPV4•29『线路45』
+黑龙江卫视,https://idclive.hljtv.com:4430/live/hljws_own.m3u8$LR•IPV4•29『线路45』
+黑龙江卫视,http://182.150.112.112:2025/hls/66/index.m3u8$LR•IPV4•29『线路46』
 东方卫视,http://smartzhu.cn:1234/651632648$LR•IPV4•29『线路1』$LR•IPV4•29『线路1』
 东方卫视,http://my1nas.dpdns.org:1234/651632648$LR•IPV4•29『线路2』$LR•IPV4•29『线路2』
 东方卫视,http://www.20260809.xyz:1234/651632648$LR•IPV4•29『线路3』$LR•IPV4•29『线路3』
@@ -2614,4 +2620,4 @@ TVB星河,http://r.jdshipin.com/sXuuD$LR•IPV4•29『线路9』
 南京少儿,http://nklive.nbs.cn/hls/e0981f3f-1a20-4a59-b8d1-17feb83a4610/index.m3u8$LR•IPV4•29『线路1』
 南京少儿,http://nklive.nbs.cn/hls/e0981f3f-1a20-4a59-b8d1-17feb83a4610/index.m3u8$LR•IPV4•29『线路2』
 灵鹿整合,#genre#
-20261013 07:55,https://p.666888666.kdns.fr/视频/1/20260415.mp4
+20261013 12:22,https://p.666888666.kdns.fr/视频/1/20260415.mp4
